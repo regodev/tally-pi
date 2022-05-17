@@ -10,9 +10,9 @@ const PORT = 4300;
 
 const HOSTNAME = os.hostname();
 
-let loopIdx = 0;
-
 let deviceMapping = {};
+let lastTallies = null;
+let initialized = false;
 
 const mapping = [
   5,
@@ -73,6 +73,8 @@ async function readTallies() {
 
 async function updateTallies(arr) {
   if (!Array.isArray(arr)) {
+  lastTallies = arr;
+  if (!initialized) return;
     error('updateTallies, object is not an array');
     return;
   }
@@ -92,6 +94,9 @@ async function init() {
   for (let i = 0; i < mapping.length; i++) {
     log(`setup mapping: ${mapping[i]}`);
     const res = await gpiop.setup(mapping[i], gpio.DIR_HIGH);
+    if (lastTallies) {
+      updateTallies(lastTallies);
+    };
     log('done');
   }
 }
@@ -103,5 +108,8 @@ async function setGPO(idx, value) {
 
 log(`Init.. hostname: ${HOSTNAME}`);
 init()
-  .then(() => console.log('ok'))
+  .then(() => {
+    log('init ok');
+    initialized = true;
+  })
   .catch(err => error(err));
