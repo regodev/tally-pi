@@ -33,7 +33,6 @@ cro.connection.onConnect = async () => {
 };
 
 cro.connection.addListener('tally', 'tallies', true, (ev) => {
-  console.log(ev);
   updateTallies(ev.value).catch(err => console.error('update tally failed'));
 });
 
@@ -47,7 +46,7 @@ cro.connection.addListener('gpo-boxes', HOSTNAME, true, (ev) => {
 async function readMappings() {
   try {
     const obj = await cro.read(HOSTNAME);
-    console.log(obj);
+    console.log('device mapping', obj);
     deviceMapping = obj;
   } catch (err) {
     deviceMapping = {};
