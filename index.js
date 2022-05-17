@@ -74,6 +74,7 @@ async function readTallies() {
 async function updateTallies(arr) {
   if (!Array.isArray(arr)) {
   lastTallies = arr;
+  console.log('updateTallies', initialized);
   if (!initialized) return;
     error('updateTallies, object is not an array');
     return;
