@@ -28,7 +28,7 @@ async function init() {
 async function loop() {
   for (let i = 0; i < mapping.length; i++) {
     console.log('setting gpo pin', mapping[i]);
-    await setGPO(i, i !== loopIdx);
+    await setGPO(i, i === loopIdx);
   }
 
   loopIdx++;
