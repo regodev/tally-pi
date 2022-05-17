@@ -15,7 +15,7 @@ const mapping = [
 ];
 
 async function init() {
-  gpio2.setMode(gpio.MODE_BCM);
+  gpio.setMode(gpio.MODE_BCM);
   for (let i = 0; i < mapping.length; i++) {
     console.log('setup', mapping[i]);
     const res = await gpiop.setup(mapping[i], gpio.DIR_OUT);
