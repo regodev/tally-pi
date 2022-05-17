@@ -88,9 +88,6 @@ async function init() {
     const res = await gpiop.setup(mapping[i], gpio.DIR_HIGH);
     console.log('done');
   }
-
-  
-  setInterval(() => loop(), 1000);
 }
 
 async function loop() {
