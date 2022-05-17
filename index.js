@@ -76,6 +76,7 @@ async function updateTallies(arr) {
     error('updateTallies, object is not an array');
     return;
   }
+  if (JSON.stringify(arr) === JSON.stringify(lastTallies)) return;
 
   lastTallies = arr;
   if (!initialized) return;
