@@ -25,19 +25,27 @@ const mapping = [
   26
 ];
 
+function log(msg) {
+  console.log(`${new Date().toISOString()}: ${msg}`);
+}
+
+function error(msg) {
+  console.error(`${new Date().toISOString()}: ${msg}`);
+}
+
 const cro = new Cachearoo({ bucket: 'gpo-boxes', host: HOST, port: PORT, clientId: HOSTNAME, enablePing: true, pingInterval: 10000 });
 cro.connection.onConnect = async () => {
-  console.log('Cachearoo connect');
+  log('Cachearoo connect');
   await readMappings();
   await readTallies();
 };
 
 cro.connection.addListener('tally', 'tallies', true, (ev) => {
-  updateTallies(ev.value).catch(err => console.error('update tally failed'));
+  updateTallies(ev.value).catch(err => error('update tally failed'));
 });
 
 cro.connection.addListener('gpo-boxes', HOSTNAME, true, (ev) => {
-  console.log('update mappings', HOSTNAME, ev);
+  log(`update mappings obj: ${ev.value}`);
   if (ev.value) {
     deviceMapping = ev.value;
   }
@@ -46,11 +54,11 @@ cro.connection.addListener('gpo-boxes', HOSTNAME, true, (ev) => {
 async function readMappings() {
   try {
     const obj = await cro.read(HOSTNAME);
-    console.log('device mapping', obj);
+    log(`update mappings: ${obj}`);
     deviceMapping = obj;
   } catch (err) {
     deviceMapping = {};
-    console.error('No mappings for', HOSTNAME);
+    error(`No mappings for ${HOSTNAME}`);
   }
 }
 
@@ -58,15 +66,14 @@ async function readTallies() {
   try {
     const obj = await cro.read('tallies', new RequestOptions({ bucket: 'tally'} ));
     await updateTallies(obj);
-    console.log(obj);
   } catch (err) {
-    console.error('Failed to read tallies', err);
+    error('Failed to read tallies', err);
   }
 }
 
 async function updateTallies(arr) {
   if (!Array.isArray(arr)) {
-    console.error('updateTallies, object is not an array');
+    error('updateTallies, object is not an array');
     return;
   }
 
@@ -83,29 +90,18 @@ async function updateTallies(arr) {
 async function init() {
   gpio.setMode(gpio.MODE_BCM);
   for (let i = 0; i < mapping.length; i++) {
-    console.log('setup', mapping[i]);
+    log(`setup mapping: ${mapping[i]}`);
     const res = await gpiop.setup(mapping[i], gpio.DIR_HIGH);
-    console.log('done');
-  }
-}
-
-async function loop() {
-  for (let i = 0; i < mapping.length; i++) {
-    await setGPO(i, i === loopIdx);
-  }
-
-  loopIdx++;
-  if (loopIdx >= mapping.length) {
-    loopIdx = 0;
+    log('done');
   }
 }
 
 async function setGPO(idx, value) {
-  console.log('setting gpo pin', mapping[idx], 'to', value);
+  log(`setting gpo pin ${mapping[idx]} to ${value}`);
   return gpiop.write(mapping[idx], !value);
 }
 
-console.log('init..', HOSTNAME);
+log(`Init.. hostname: ${HOSTNAME}`);
 init()
   .then(() => console.log('ok'))
-  .catch(err => console.error(err));
+  .catch(err => error(err));
