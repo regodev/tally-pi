@@ -15,7 +15,9 @@ const mapping = [
 
 async function init() {
   for (let i = 0; i < mapping.length; i++) {
+    console.log('setup', mapping[i]);
     const res = await gpio.setup(mapping[i], gpio.DIR_OUT);
+    console.log('done');
   }
 
   setInterval(() => loop(), 1000);
