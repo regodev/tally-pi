@@ -54,7 +54,7 @@ cro.connection.addListener('gpo-boxes', HOSTNAME, true, (ev) => {
 async function readMappings() {
   try {
     const obj = await cro.read(HOSTNAME);
-    log(`update mappings: ${obj}`);
+    log(`update mappings: ${JSON.stringify(obj)}`);
     deviceMapping = obj;
   } catch (err) {
     deviceMapping = {};
