@@ -74,7 +74,7 @@ async function updateTallies(arr) {
     const mappingIdx = deviceMapping[arr[i].name];
     if (mappingIdx != null) {
       if (arr[i].tally) {
-        await setGPO(mappingIdx, !!arr[i].tally.tally2);
+        await setGPO(mappingIdx, !!(arr[i].tally.tally1 || arr[i].tally.tally2));
       }
     }
   }
