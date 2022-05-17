@@ -103,7 +103,11 @@ async function init() {
   }
 }
 
+const lastSet = {};
+
 async function setGPO(idx, value) {
+  if (lastSet[idx] === value) return;
+  lastSet[idx] = value;
   log(`setting gpo pin ${mapping[idx]} to ${value}`);
   return gpiop.write(mapping[idx], !value);
 }
