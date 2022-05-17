@@ -73,12 +73,12 @@ async function readTallies() {
 
 async function updateTallies(arr) {
   if (!Array.isArray(arr)) {
-  lastTallies = arr;
-  console.log('updateTallies', initialized);
-  if (!initialized) return;
     error('updateTallies, object is not an array');
     return;
   }
+
+  lastTallies = arr;
+  if (!initialized) return;
 
   for (let i = 0; i < arr.length; i++) {
     const mappingIdx = deviceMapping[arr[i].name];
