@@ -67,7 +67,7 @@ cro.connection.addListener('tally', 'tallies', true, (ev) => {
 });
 
 cro.connection.addListener('gpo-boxes', HOSTNAME, true, (ev) => {
-  log(`update mappings obj: ${ev.value}`);
+  log(`Update mappings obj: ${ev.value}`);
   if (ev.value) {
     deviceMapping = ev.value;
   }
@@ -76,7 +76,7 @@ cro.connection.addListener('gpo-boxes', HOSTNAME, true, (ev) => {
 async function readMappings() {
   try {
     const obj = await cro.read(HOSTNAME);
-    log(`update mappings: ${JSON.stringify(obj)}`);
+    log(`Update mappings: ${JSON.stringify(obj)}`);
     deviceMapping = obj;
   } catch (err) {
     deviceMapping = {};
@@ -120,12 +120,13 @@ async function updateTallies(arr) {
 async function init() {
   gpio.setMode(gpio.MODE_BCM);
   for (let i = 0; i < mapping.length; i++) {
-    log(`setup mapping: ${mapping[i]}`);
+    if (debug) {
+      log(`setup mapping: ${mapping[i]}`);
+    }
     const res = await gpiop.setup(mapping[i], gpio.DIR_HIGH);
     if (lastTallies) {
       updateTallies(lastTallies);
     };
-    log('done');
   }
 }
 
@@ -134,7 +135,9 @@ const lastSet = {};
 async function setGPO(idx, value) {
   if (lastSet[idx] === value) return;
   lastSet[idx] = value;
-  log(`Setting gpo pin ${mapping[idx]} to ${value}`);
+  if (debug) {
+    log(`Setting gpo pin ${mapping[idx]} to ${value}`);
+  }
   return gpiop.write(mapping[idx], !value);
 }
 
