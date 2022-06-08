@@ -1,5 +1,25 @@
-const gpio = require('rpi-gpio');
+const debug = process.argv.pop() === 'debug';
+if (debug) {
+  log('Debug mode');
+}
+
+const gpioMock = {
+  promise: {
+    setup: async (mapping, dir) => {
+    },
+    write: async (port, value) => {
+      log('gpio write', port, value);
+    }
+  },
+  setMode: (mode) => {
+  }
+}
+
+const gpiolib = require('rpi-gpio');
+
+const gpio = debug ? gpioMock : gpiolib;
 const gpiop = gpio.promise;
+
 const os = require('os');
 const { RequestOptions } = require('cachearoo');
 
@@ -9,6 +29,8 @@ const HOST = 'tally.tools.regoproduction.io';
 const PORT = 4300;
 
 const HOSTNAME = os.hostname();
+
+let nextTallyObject = null;
 
 let deviceMapping = {};
 let lastTallies = null;
@@ -41,7 +63,7 @@ cro.connection.onConnect = async () => {
 };
 
 cro.connection.addListener('tally', 'tallies', true, (ev) => {
-  updateTallies(ev.value).catch(err => error('update tally failed'));
+  nextTallyObject = ev.value;
 });
 
 cro.connection.addListener('gpo-boxes', HOSTNAME, true, (ev) => {
@@ -85,7 +107,11 @@ async function updateTallies(arr) {
     const mappingIdx = deviceMapping[arr[i].name];
     if (mappingIdx != null) {
       if (arr[i].tally) {
-        await setGPO(mappingIdx, !!(arr[i].tally.tally1 || arr[i].tally.tally2));
+        try {
+          await setGPO(mappingIdx, !!(arr[i].tally.tally1 || arr[i].tally.tally2));
+        } catch (err) {
+          error('Failed to update tally', mappingIdx);
+        }
       }
     }
   }
@@ -108,7 +134,7 @@ const lastSet = {};
 async function setGPO(idx, value) {
   if (lastSet[idx] === value) return;
   lastSet[idx] = value;
-  log(`setting gpo pin ${mapping[idx]} to ${value}`);
+  log(`Setting gpo pin ${mapping[idx]} to ${value}`);
   return gpiop.write(mapping[idx], !value);
 }
 
@@ -118,4 +144,18 @@ init()
     log('init ok');
     initialized = true;
   })
-  .catch(err => error(err));
+  .catch((err) => {
+    error(err);
+  });
+
+  setInterval(async () => {
+    if (nextTallyObject) {
+      const tally = nextTallyObject;
+      nextTallyObject = null;
+      try {
+        await updateTallies(tally);
+      } catch (err) {
+        error('Failed to update tallies');
+      }
+    }
+  }, 10);
