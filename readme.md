@@ -20,7 +20,7 @@
 - sudo apt-get install -y nodejs
 - sudo apt-get install -y git
 - sudo npm install -g pm2
-- git clone https://github.com/regodev/tally-pi.git
+- sudo git clone https://github.com/regodev/tally-pi.git
 - cd tally-pi
 - npm install
 
