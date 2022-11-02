@@ -3,7 +3,7 @@
 ## Configure
 - tally.tools.regoproduction.io:4300/_admin
 - Bucket: gpo-boxes
-- Key: #computername#
+- Create key: #computername#
 
 #### Example object for mapping TallyArbiter names to physical gpo ports
 ```
