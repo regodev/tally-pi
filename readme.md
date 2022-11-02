@@ -16,7 +16,7 @@
 
 ## Install
 - sudo apt-get update
-- curl -sL https://deb.nodesource.com/setup_14.x | bash -
+- sudo curl -sL https://deb.nodesource.com/setup_14.x | sudo bash -
 - sudo apt-get install -y nodejs
 - sudo apt-get install -y git
 - sudo npm install -g pm2
