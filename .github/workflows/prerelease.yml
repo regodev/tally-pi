@@ -15,12 +15,12 @@ jobs:
       - uses: jaywcjlove/github-action-package@main
         id: pkg
         with:
-          path: backend/package.json
+          path: package.json
 
       - uses: jaywcjlove/github-action-package@main
         id: pkg-update
         with:
-          path: backend/package.json
+          path: package.json
           version: "${{steps.pkg.outputs.version}}.${{github.run_number}}"
 
       - run: echo "version - ${{ steps.pkg-update.outputs.version }}"
