@@ -1,0 +1,41 @@
+name: Release tagged
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    name: "Release tagged"
+    runs-on: "windows-latest"
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Use Node.js 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install
+        run: |
+          cd cicd
+          npm install
+          
+      - name: Test
+        run: |
+          cd cicd
+          npm test
+
+      - name: Build installer
+        run: |
+          cd cicd
+          npm run package-win
+
+      - name: Release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          files: |
+            cicd/setup/win/Output/*.exe

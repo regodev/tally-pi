@@ -1,0 +1,27 @@
+{
+  "name": "gpio-guy-cicd",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "clean": "node clean",
+    "test": "npm run test-backend",
+    "test-backend": "cd .. && npm test",
+    "install-backend": "cd .. && npm install",
+    "postinstall": "npm run install-backend",
+    "build": "npm run clean && npm run build-backend",
+    "build-backend": "cd .. && npm run clean && npm run build",
+    "copy-backend": "copyfiles ../dist/**/* build/src -u 2 && copyfiles -V ../package.json build -u 1 && cd build && npm install --production",
+    "copy-files": "npm run copy-backend",
+    "package-win": "npm run build && npm run copy-files && cd setup\\win && make-installer.bat"
+  },
+  "author": "Peter Eriksson",
+  "license": "ISC",
+  "homepage": "https://github.com/regodev/gpio-guy#readme",
+  "devDependencies": {
+    "copyfiles": "^2.4.1"
+  }
+}

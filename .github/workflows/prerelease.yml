@@ -1,0 +1,56 @@
+name: pre-release-dev
+on:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  pre-release:
+    name: "Pre Release"
+    runs-on: "windows-latest"
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: jaywcjlove/github-action-package@main
+        id: pkg
+        with:
+          path: backend/package.json
+
+      - uses: jaywcjlove/github-action-package@main
+        id: pkg-update
+        with:
+          path: backend/package.json
+          version: "${{steps.pkg.outputs.version}}.${{github.run_number}}"
+
+      - run: echo "version - ${{ steps.pkg-update.outputs.version }}"
+      
+      - name: Use Node.js 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install
+        run: |
+          cd cicd
+          npm install
+          
+      - name: Test
+        run: |
+          cd cicd
+          npm test
+
+      - name: Build installer
+        run: |
+          cd cicd
+          npm run package-win
+
+      - name: Pre-release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: true
+          title: "Development Build ${{github.run_number}}"
+          files: |
+            cicd/setup/win/Output/*.exe
