@@ -5,15 +5,26 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "dev": "cross-env NODE_ENV=dev ts-node src/app.ts",
+    "start": "ts-node src/app.ts",
+    "clean": "node clean",
+    "build": "tsc"
   },
   "author": "",
   "license": "ISC",
-  "devDependencies": {
+  "optionalDependencies": {
     "@types/rpi-gpio": "^2.1.1",
-    "rpi-gpio": "^2.1.7"
+    "rpi-gpio": "^2.1.7",
+    "serialport": "^11.0.0"
   },
   "dependencies": {
-    "cachearoo": "^1.0.17"
+    "cachearoo": "^1.0.17",
+    "winston": "^3.11.0",
+    "winston-daily-rotate-file": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.19",
+    "cross-env": "^7.0.3",
+    "ts-node": "^10.9.2"
   }
 }
