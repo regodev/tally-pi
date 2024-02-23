@@ -1,4 +1,5 @@
 import { IEvent } from "cachearoo/dist/libs/cro.connection";
+import { logger } from "./log";
 
 const debug = process.argv.pop() === 'debug';
 if (debug) {
@@ -61,11 +62,11 @@ let lastTallies: any[] = [];
 let initialized = false;
 
 function log(msg: string, ...args: any[]) {
-  console.log(`${new Date().toISOString()}: ${msg} ${args.join(' ')}`);
+  logger.info(`${msg} ${args.join(' ')}`);
 }
 
 function error(msg: string, ...args: any[]) {
-  console.error(`${new Date().toISOString()}: ${msg} ${args.join(' ')}`);
+  logger.error(`${msg} ${args.join(' ')}`);
 }
 
 const cro = new Cachearoo({ bucket: 'gpo-boxes', host: HOST, port: PORT, clientId: HOSTNAME, enablePing: true, pingInterval: 10000 });
@@ -123,7 +124,6 @@ async function updateTallies(arr: any[]) {
         try {
           await setGPO(mappingIdx, !!(arr[i].tally.tally1 || arr[i].tally.tally2));
         } catch (err) {
-          console.log(err);
           error('Failed to update tally', mappingIdx, err);
         }
       }
@@ -132,7 +132,6 @@ async function updateTallies(arr: any[]) {
 }
 
 async function init() {
-  console.log(gpiolib);
   if (gpiop.init !== undefined) {
     log('Init gpio');
     await gpiop.init();
