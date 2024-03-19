@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "cachearoo": "^1.0.17",
-    "numato-gpio": "^1.0.0",
+    "numato-gpio": "^1.0.2",
     "winston": "^3.11.0",
     "winston-daily-rotate-file": "^5.0.0"
   },
