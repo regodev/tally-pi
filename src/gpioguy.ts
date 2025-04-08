@@ -6,8 +6,8 @@ let cachearoo: Cachearoo | undefined = undefined;
 module.exports = {
   MODE_BCM: 'bcm',
   promise: {
-    init: async (cro: Cachearoo) => {
-      cachearoo = cro;
+    init: async () => {
+      cachearoo = new Cachearoo();
     },
     // @ts-ignore
     setup: async (mapping: any, dir: any) => {

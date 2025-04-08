@@ -134,7 +134,7 @@ async function updateTallies(arr: any[]) {
 async function init() {
   if (gpiop.init !== undefined) {
     log('Init gpio');
-    await gpiop.init(cro);
+    await gpiop.init();
   }
 
   gpio.setMode(gpio.MODE_BCM);
