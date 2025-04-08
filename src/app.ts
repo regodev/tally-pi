@@ -36,7 +36,7 @@ let mapping = [
 ];
 
 if (process.platform === 'win32') {
-  gpiolib = require('./numato');
+  gpiolib = require('./gpioguy');
   mapping = [0, 1, 2, 3, 4, 5, 6, 7];
 } else {
   gpiolib = require('rpi-gpio');
@@ -122,7 +122,7 @@ async function updateTallies(arr: any[]) {
     if (mappingIdx != null) {
       if (arr[i].tally) {
         try {
-          await setGPO(mappingIdx, !!(arr[i].tally.tally1 || arr[i].tally.tally2));
+          await setGPO(mappingIdx, !!((arr[i].tally.tally1 > 0) || (arr[i].tally.tally2 > 0)));
         } catch (err) {
           error('Failed to update tally', mappingIdx, err);
         }
@@ -134,7 +134,7 @@ async function updateTallies(arr: any[]) {
 async function init() {
   if (gpiop.init !== undefined) {
     log('Init gpio');
-    await gpiop.init();
+    await gpiop.init(cro);
   }
 
   gpio.setMode(gpio.MODE_BCM);
@@ -157,7 +157,7 @@ async function setGPO(idx: number, value: boolean) {
   if (debug) {
     log(`Setting gpo pin ${mapping[idx]} to ${value}`);
   }
-  return gpiop.write(mapping[idx], !value);
+  return gpiop.write(mapping[idx], value);
 }
 
 log(`Init.. hostname: ${HOSTNAME}`);
